@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  orders    Order[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  price       Int      // ذخیره به تومان یا ریال به صورت عدد صحیح برای دقت و سرعت
+  stock       Int      @default(0)
+  category    String   // مثلاً: necklace, ring, earring, bracelet
+  imageUrl    String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orderItems  OrderItem[]
+
+  // ایندکس‌های ترکیبی برای فیلتر و مرتب‌سازی فوق‌سریع در صفحه محصولات
+  @@index([isActive, category])
+  @@index([isActive, price])
+  @@index([createdAt(sort: Desc)])
+}
+
+model Order {
+  id           String      @id @default(cuid())
+  userId       String
+  user         User        @relation(fields: [userId], references: [id])
+  totalPrice   Int
+  status       OrderStatus @default(PENDING)
+  fullName     String
+  phone        String
+  address      String
+  postalCode   String
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  items        OrderItem[]
+
+  // برای بارگذاری سریع سفارش‌ها در پنل ادمین و پروفایل کاربر
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Int     // قیمتی که در لحظه خرید ثبت شده
+
+  @@index([orderId])
+}

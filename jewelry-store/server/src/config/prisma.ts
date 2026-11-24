@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 20, // حداکثر کانکشن هم‌زمان برای مدیریت ترافیک بالا
+  max: Number(process.env.DB_POOL_MAX) || 10,
 });
 
 const adapter = new PrismaPg(pool);

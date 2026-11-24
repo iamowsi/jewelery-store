@@ -3,9 +3,11 @@ import { Plus } from 'lucide-react';
 import type { Product } from '../types';
 import { formatPrice } from '../services/api';
 import { useCartStore } from '../store/useCartStore';
+import { useAuthStore } from '../store/useAuthStore';
 
 export default function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((s) => s.addItem);
+  const isAdmin = useAuthStore((s) => s.user?.role === 'ADMIN');
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-stone-200/70 hover:border-stone-300 transition flex flex-col">
@@ -35,14 +37,16 @@ export default function ProductCard({ product }: { product: Product }) {
             {formatPrice(product.price)}
           </span>
 
-          <button
-            disabled={product.stock === 0}
-            onClick={() => addItem(product)}
-            className="flex items-center gap-1 text-xs bg-stone-900 text-white px-3 py-1.5 rounded-full hover:bg-amber-800 disabled:bg-stone-300 transition cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            {product.stock > 0 ? 'افزودن' : 'ناموجود'}
-          </button>
+          {!isAdmin && (
+            <button
+              disabled={product.stock === 0}
+              onClick={() => addItem(product)}
+              className="flex items-center gap-1 text-xs bg-stone-900 text-white px-3 py-1.5 rounded-full hover:bg-amber-800 disabled:bg-stone-300 transition cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              {product.stock > 0 ? 'افزودن' : 'ناموجود'}
+            </button>
+          )}
         </div>
       </div>
     </div>

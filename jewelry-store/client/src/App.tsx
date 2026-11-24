@@ -7,7 +7,7 @@ import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
 import Auth from './pages/Auth';
 import Admin from './pages/Admin';
-
+import MyOrders from './pages/MyOrders';
 export default function App() {
   return (
     <BrowserRouter>
@@ -15,6 +15,7 @@ export default function App() {
         <Navbar />
         <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-10">
           <Routes>
+            <Route path="/orders" element={<MyOrders />} />
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<Products />} />
             <Route path="/products/:slug" element={<ProductDetail />} />

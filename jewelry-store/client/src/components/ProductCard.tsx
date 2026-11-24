@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import type { Product } from '../types';
 import { formatPrice } from '../services/api';
@@ -8,18 +9,22 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <div className="group bg-white rounded-2xl overflow-hidden border border-stone-200/70 hover:border-stone-300 transition flex flex-col">
-      <div className="aspect-square overflow-hidden bg-stone-100">
+      <Link to={`/products/${product.slug}`} className="aspect-square overflow-hidden bg-stone-100 block">
         <img
           src={product.imageUrl}
           alt={product.title}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
         />
-      </div>
+      </Link>
 
       <div className="p-4 flex flex-col flex-1 justify-between gap-3">
         <div>
-          <h3 className="text-sm font-medium text-stone-900 line-clamp-1">{product.title}</h3>
+          <Link to={`/products/${product.slug}`}>
+            <h3 className="text-sm font-medium text-stone-900 line-clamp-1 group-hover:text-amber-800 transition">
+              {product.title}
+            </h3>
+          </Link>
           <p className="text-xs text-stone-500 mt-1 line-clamp-2 leading-relaxed">
             {product.description}
           </p>
